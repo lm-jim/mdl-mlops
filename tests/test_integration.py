@@ -10,4 +10,4 @@ def test_pipeline_execution():
     dataloader = dataloaders.define_dataloaders(batch_size=config["data_batch_size"])
     conv_model = model.ConvCVAE(latent_dim=config["latent_dim"], lr=config["learning_rate"])
     
-    train.train_model(conv_model, dataloader, batch_size=config["train_batch_size"], max_epochs=1)
+    train.train_model(conv_model, dataloader, batch_size=config["train_batch_size"], max_epochs=1, save_output=False)

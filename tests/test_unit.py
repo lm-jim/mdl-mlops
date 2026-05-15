@@ -1,3 +1,5 @@
+from logging import config
+
 import pytest
 import os
 from src import dataloaders, utils, model, train, preprocessing
@@ -58,9 +60,10 @@ def test_train_model():
                     )
     
 def test_best_model_exists():
-    assert os.path.exists("models/main/best_model.ckpt")
+    config = utils.load_config("configuration.yaml")
+    assert os.path.exists(f"models/main/best_model-{config['model_version']}.ckpt")
 
 def test_best_model_loadable():
-    conv_model = model.load_best_model()
+    conv_model = utils.load_best_model()
     conv_model.eval()
     assert conv_model is not None

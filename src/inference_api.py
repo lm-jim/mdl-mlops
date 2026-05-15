@@ -30,11 +30,11 @@ app = FastAPI(
 )
 
 @app.post("/generateNumber", tags=["Generación"])
-def generateNumber(number: int):
+def generateNumber(body: GenerateRequest):
 
-    generated_tensor = app.state.model.generate_number(number)
+    generated_tensor = app.state.model.generate_number(body.number)
     img_array = (generated_tensor * 255).astype("uint8")
-    img = Image.fromarray(img_array)
+    img = Image.fromarray(img_array).resize((280, 280))
     
     buf = io.BytesIO()
     img.save(buf, format="PNG")
