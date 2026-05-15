@@ -10,16 +10,24 @@ def test_mnsit_download():
     utils.download_mnist()
 
 def test_load_config():
-    config = utils.load_config("configuration.yaml")
+    config = utils.load_config("gbl_config.yaml")
+    assert "model_configuration" in config
+    assert "log_level" in config
+    assert os.path.exists(f'config/{config["model_configuration"]}')
+
+def test_load_model_config():
+    config = utils.load_model_config()
     assert "seed" in config
     assert "epochs" in config
     assert "data_batch_size" in config
     assert "train_batch_size" in config
     assert "latent_dim" in config
     assert "learning_rate" in config
+    assert "model_name" in config
+    assert "model_version" in config
 
 def test_config_formats():
-    config = utils.load_config("configuration.yaml")
+    config = utils.load_model_config()
     assert isinstance(config["seed"], int)
     assert isinstance(config["epochs"], int)
     assert isinstance(config["data_batch_size"], int)
@@ -37,17 +45,17 @@ def test_preprocess_data():
     preprocessing.preprocess_data()
 
 def test_dataloader_creation():
-    config = utils.load_config("configuration.yaml")
+    config = utils.load_model_config()
     data_module = dataloaders.define_dataloaders(batch_size=config["data_batch_size"])
     assert data_module is not None
 
 def test_model_creation():
-    config = utils.load_config("configuration.yaml")
+    config = utils.load_model_config()
     conv_model = model.ConvCVAE(latent_dim=config["latent_dim"], lr=config["learning_rate"])
     assert conv_model is not None
 
 def test_train_model():
-    config = utils.load_config("configuration.yaml")
+    config = utils.load_model_config()
     data_module = dataloaders.define_dataloaders(batch_size=config["data_batch_size"])
     conv_model = model.ConvCVAE(latent_dim=config["latent_dim"], lr=config["learning_rate"])
     train.train_model(
@@ -60,7 +68,7 @@ def test_train_model():
                     )
     
 def test_best_model_exists():
-    config = utils.load_config("configuration.yaml")
+    config = utils.load_model_config()
     assert os.path.exists(f"models/main/best_model-{config['model_version']}.ckpt")
 
 def test_best_model_loadable():

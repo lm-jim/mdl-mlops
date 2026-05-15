@@ -81,6 +81,19 @@ class ConvCVAE(pl.LightningModule):
         self.log("train_loss", loss, prog_bar=True, on_epoch=True)
         return loss
 
+    def validation_step(self, batch, batch_idx):
+        x, y = batch
+        recon_x, mu, logvar = self.forward(x, y)
+        
+        # Calculamos la misma pérdida
+        recon_loss = F.binary_cross_entropy(recon_x, x, reduction='sum')
+        kld_loss = -0.5 * torch.sum(1 + logvar - mu.pow(2) - logvar.exp())
+
+        val_loss = (recon_loss + kld_loss) / x.size(0)
+        
+        self.log("val_loss", val_loss, prog_bar=True)
+        return val_loss
+
     def configure_optimizers(self):
         return torch.optim.Adam(self.parameters(), lr=self.lr)
     

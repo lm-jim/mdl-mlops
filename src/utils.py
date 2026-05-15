@@ -52,6 +52,10 @@ def download_mnist():
         root='./data', train=False, download=True, transform=transform
     )
 
+def load_model_config():
+    config = load_config("gbl_config.yaml")
+    return load_config(config["model_configuration"])
+
 def load_best_model():
-    config = load_config("configuration.yaml")
+    config = load_model_config()
     return model.ConvCVAE.load_from_checkpoint(f"models/main/best_model-{config['model_version']}.ckpt")

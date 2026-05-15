@@ -1,0 +1,2 @@
+model_configuration: "configuration_main-v2.0.yaml"
+log_level: "DEBUG"
