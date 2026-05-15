@@ -22,3 +22,13 @@ jobs:
               env:
                   PYTHONPATH: .
               run: pytest
+    deploy:
+        runs-on: ubuntu-latest
+        needs: test
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v4
+            - name: Despliegue en Hugging Face
+              run: |
+                  git remote add hf https://lm-jim:${{ secrets.HF_TOKEN }}@huggingface.co/spaces/lm-jim/mdl-mlops
+                  git push hf main --force
