@@ -11,6 +11,7 @@ jobs:
               uses: actions/checkout@v4
               with:
                   lfs: true
+                  fetch-depth: 0
 
             - name: Configuración Python
               uses: actions/setup-python@v5
@@ -30,6 +31,9 @@ jobs:
         steps:
             - name: Checkout
               uses: actions/checkout@v4
+              with:
+                  lfs: true
+                  fetch-depth: 0
             - name: Despliegue en Hugging Face
               run: |
                   git remote add hf https://lm-jim:${{ secrets.HF_TOKEN }}@huggingface.co/spaces/lm-jim/mdl-mlops
