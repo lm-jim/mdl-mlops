@@ -1,5 +1,6 @@
 import io
 from PIL import Image
+from fastapi.responses import RedirectResponse
 import torch
 from pydantic import BaseModel, Field
 from contextlib import asynccontextmanager
@@ -24,15 +25,12 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(
     title="Generador de Imágenes MNIST",
-    lifespan=lifespan
+    lifespan=lifespan,
+    swagger_ui_parameters={"defaultModelsExpandDepth": -1}
 )
 
-@app.get("/")
-def saluda():
-    return {"message" : "Utiliza POST /generate con JSON {\"number\": int} para generar una imagen"}
-
-@app.post("/generate")
-def predict(number: int):
+@app.post("/generateNumber", tags=["Generación"])
+def generateNumber(number: int):
 
     generated_tensor = app.state.model.generate_number(number)
     img_array = (generated_tensor * 255).astype("uint8")
@@ -43,3 +41,8 @@ def predict(number: int):
     byte_im = buf.getvalue()
     
     return Response(content=byte_im, media_type="image/png")
+
+
+@app.get("/", include_in_schema=False)
+async def root():
+    return RedirectResponse(url="/docs")
